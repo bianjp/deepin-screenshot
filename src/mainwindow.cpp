@@ -1016,8 +1016,8 @@ void MainWindow::saveSpecificedPath(QString path)
 
     QString summary = QString(tr("Picture has been saved to %1")).arg(savePath);
 
-    m_notifyDBInterface->Notify("Deepin Screenshot", 0,  "deepin-screenshot", "",
-                                summary, actions, hints, 0);
+//    m_notifyDBInterface->Notify("Deepin Screenshot", 0,  "deepin-screenshot", "",
+//                                summary, actions, hints, 0);
     exitApp();
 }
 
@@ -1331,19 +1331,21 @@ bool MainWindow::saveAction(const QPixmap &pix)
                                                                             Qt::KeepAspectRatio, Qt::FastTransformation);
     }
 
+    saveOption = QStandardPaths::PicturesLocation;
+    if (m_selectAreaName.isEmpty()) {
+        m_saveFileName = QString("%1/%2_%3.png").arg(QStandardPaths::writableLocation(
+                         saveOption) + QString("/Screenshots")).arg(tr("fullscreen")).arg(currentTime);
+    } else {
+        m_saveFileName = QString("%1/%2_%3.png").arg(QStandardPaths::writableLocation(
+                         saveOption) + QString("/Screenshots")).arg(tr("area")).arg(currentTime);
+    }
+
     if (m_saveIndex == 2 && m_saveFileName.isEmpty()) {
         return false;
     } else if (m_saveIndex == 2 || !m_saveFileName.isEmpty()) {
         if (!screenShotPix.save(m_saveFileName,  QFileInfo(m_saveFileName).suffix().toLocal8Bit()))
             return false;
     } else if (saveOption != QStandardPaths::TempLocation && m_saveFileName.isEmpty()) {
-        if (m_selectAreaName.isEmpty()) {
-            m_saveFileName = QString("%1/%2_%3.png").arg(QStandardPaths::writableLocation(
-                             saveOption)).arg(tr("DeepinScreenshot")).arg(currentTime);
-        } else {
-            m_saveFileName = QString("%1/%2_%3_%4.png").arg(QStandardPaths::writableLocation(
-                             saveOption)).arg(tr("DeepinScreenshot")).arg(m_selectAreaName).arg(currentTime);
-        }
         if (!screenShotPix.save(m_saveFileName,  "PNG"))
             return false;
     }
@@ -1401,14 +1403,14 @@ void MainWindow::sendNotify(int saveIndex, QString saveFilePath, const bool succ
         summary = QString(tr("Picture has been saved to %1")).arg(saveFilePath);
     }
 
-    if (saveIndex == 3 && !m_noNotify) {
-        QVariantMap emptyMap;
-        m_notifyDBInterface->Notify("Deepin Screenshot", 0,  "deepin-screenshot", "",
-                                    summary,  QStringList(), emptyMap, 0);
-    }  else if ( !m_noNotify &&  !(m_saveIndex == 2 && m_saveFileName.isEmpty())) {
-        m_notifyDBInterface->Notify("Deepin Screenshot", 0,  "deepin-screenshot", "",
-                                    summary, actions, hints, 0);
-    }
+//    if (saveIndex == 3 && !m_noNotify) {
+//        QVariantMap emptyMap;
+//        m_notifyDBInterface->Notify("Deepin Screenshot", 0,  "deepin-screenshot", "",
+//                                    summary,  QStringList(), emptyMap, 0);
+//    }  else if ( !m_noNotify &&  !(m_saveIndex == 2 && m_saveFileName.isEmpty())) {
+//        m_notifyDBInterface->Notify("Deepin Screenshot", 0,  "deepin-screenshot", "",
+//                                    summary, actions, hints, 0);
+//    }
 
     QTimer::singleShot(2, [=]{
         exitApp();

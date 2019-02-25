@@ -1,0 +1,23 @@
+# https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/deepin-screenshot
+
+pkgname=deepin-screenshot
+pkgver=4.1.8
+pkgrel=1
+pkgdesc="Easy-to-use screenshot tool for linuxdeepin desktop environment"
+arch=('x86_64')
+url="https://github.com/linuxdeepin/deepin-screenshot"
+license=('GPL3')
+depends=('deepin-qt5integration' 'dtkwm' 'deepin-turbo')
+makedepends=('cmake' 'qt5-tools')
+groups=('deepin-extra')
+
+build() {
+  cd ../../
+  cmake . -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd ../../
+  make DESTDIR="$pkgdir" install
+}
